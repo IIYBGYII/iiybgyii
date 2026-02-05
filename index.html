@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Portfolio | Gabriel S. Silva</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ===== RESET RADICAL ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: #000;
+            color: white;
+            cursor: url('cursor.cur'), auto;
+            font-weight: 400;
+        }
+        
+        /* ===== CONTAINER PRINCIPAL COM SCROLL SNAP INSTANTÂNEO ===== */
+        .snap-container {
+            width: 100%;
+            height: 100vh;
+            overflow-y: scroll;
+            overflow-x: hidden;
+            scroll-snap-type: y mandatory;
+            scroll-behavior: auto; /* INSTANTÂNEO */
+        }
+        
+        /* Remove scrollbar */
+        .snap-container::-webkit-scrollbar {
+            display: none;
+        }
+        
+        /* ===== SEÇÕES - 1 TELA EXATA POR VEZ ===== */
+        .snap-section {
+            width: 100%;
+            height: 100vh;
+            scroll-snap-align: start;
+            scroll-snap-stop: always;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Força 1920x1080 em telas grandes */
+        @media (min-width: 1920px) and (min-height: 1080px) {
+            .snap-section {
+                width: 1920px;
+                height: 1080px;
+                margin: 0 auto;
+            }
+            
+            .snap-container {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+        
+        /* ===== SEÇÃO 1 - HOME ===== */
+        #home {
+            /* IMAGEM HOME (coloque no repositório como images/home-bg.jpg) */
+            background: #000 url('images/home-bg.jpg') no-repeat center center;
+            background-size: cover;
+        }
+        
+        /* ===== SEÇÃO 2 - GALLERY PREVIEW ===== */
+        #gallery-preview {
+            /* IMAGEM GALLERY (coloque no repositório como images/gallery-bg.jpg) */
+            background: #000 url('images/gallery-bg.jpg') no-repeat center center;
+            background-size: cover;
+            position: relative;
+        }
+        
+        /* Overlay escuro para melhor contraste */
+        .gallery-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .gallery-container {
+            width: 100%;
+            max-width: 1400px;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .section-title {
+            font-size: 3.5vw;
+            margin-bottom: 4vw;
+            text-align: center;
+            font-weight: 700;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+        
+        .preview-grid {
+            display: flex;
+            justify-content: center;
+            gap: 3vw;
+            margin-bottom: 4vw;
+        }
+        
+        .preview-item {
+            width: 22vw;
+            max-width: 380px;
+            height: 22vw;
+            max-height: 380px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            overflow: hidden;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+        
+        .image-protection {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+        }
+        
+        .preview-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            pointer-events: none;
+        }
+        
+        /* ===== BOTÃO SEE GALLERY ===== */
+        .see-gallery-btn {
+            padding: 20px 50px;
+            background: white;
+            color: black;
+            border: none;
+            border-radius: 35px;
+            font-size: 1.2vw;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            margin-top: 2vw;
+            min-width: 250px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            z-index: 2;
+        }
+        
+        .see-gallery-btn::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 10%;
+            width: 80%;
+            height: 30px;
+            background: rgba(138, 43, 226, 0);
+            border-radius: 50%;
+            filter: blur(15px);
+            transition: all 0.4s ease;
+            z-index: -1;
+        }
+        
+        .see-gallery-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(138, 43, 226, 0.3),
+                rgba(147, 51, 234, 0.5),
+                rgba(138, 43, 226, 0.3),
+                transparent);
+            transition: left 0.7s ease;
+        }
+        
+        .see-gallery-btn:hover::before {
+            left: 100%;
+        }
+        
+        .see-gallery-btn:hover::after {
+            background: rgba(138, 43, 226, 0.4);
+            filter: blur(20px);
+            bottom: -20px;
+            animation: pulse-glow 1.5s infinite alternate;
+        }
+        
+        .see-gallery-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+        
+        @keyframes pulse-glow {
+            0% { background: rgba(138, 43, 226, 0.3); filter: blur(15px); }
+            100% { background: rgba(138, 43, 226, 0.6); filter: blur(25px); }
+        }
+        
+        /* ===== SEÇÃO 3 - ABOUT ME ===== */
+        #about {
+            /* IMAGEM ABOUT (coloque no repositório como images/about-bg.jpg) */
+            background: #000 url('images/about-bg.jpg') no-repeat center center;
+            background-size: cover;
+        }
+        
+        .about-footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 25vh;
+            min-height: 200px;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(15px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .social-icons {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 2.5vw;
+            margin-bottom: 25px;
+            max-width: 1200px;
+        }
+        
+        .social-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .social-icon:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-5px);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+        
+        .social-name {
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease;
+            font-weight: 500;
+            backdrop-filter: blur(5px);
+        }
+        
+        .social-icon:hover .social-name {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .copyright {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 14px;
+            text-align: center;
+            font-weight: 300;
+        }
+        
+        /* ===== NAVEGAÇÃO ===== */
+        .nav-dots {
+            position: fixed;
+            right: 30px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 1000;
+        }
+        
+        .nav-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-dot.active {
+            background: white;
+            transform: scale(1.4);
+            box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+        }
+        
+        /* Botão Voltar ao Topo */
+        .back-to-top {
+            position: fixed;
+            right: 40px;
+            bottom: 40px;
+            width: 50px;
+            height: 50px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #000;
+            text-decoration: none;
+            font-size: 24px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            cursor: pointer;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .back-to-top.visible {
+            opacity: 0.7;
+            visibility: visible;
+        }
+        
+        .back-to-top:hover {
+            opacity: 1;
+            transform: scale(1.1);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
+        }
+        
+        /* Scroll Hint (igual botão voltar) */
+        .scroll-hint {
+            position: fixed;
+            right: 40px;
+            bottom: 40px;
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 24px;
+            animation: bounce 2s infinite;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 1000;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+        
+        /* Menu do Topo */
+        .top-menu {
+            position: fixed;
+            top: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50px;
+            padding: 10px 25px;
+            display: flex;
+            gap: 35px;
+            z-index: 1000;
+        }
+        
+        .menu-item {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            padding: 6px 18px;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .menu-item:hover,
+        .menu-item.active {
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        /* ===== RESPONSIVIDADE ===== */
+        @media (max-width: 1600px) {
+            .section-title { font-size: 50px; }
+            .see-gallery-btn { font-size: 18px; }
+        }
+        
+        @media (max-width: 1200px) {
+            .preview-item {
+                width: 28vw;
+                height: 28vw;
+            }
+            .social-icons {
+                gap: 25px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .section-title { font-size: 36px; }
+            .preview-item {
+                width: 250px;
+                height: 250px;
+            }
+            .see-gallery-btn {
+                font-size: 14px;
+                padding: 15px 30px;
+                min-width: 200px;
+            }
+            .top-menu {
+                padding: 8px 15px;
+                gap: 20px;
+            }
+            .menu-item {
+                font-size: 14px;
+                padding: 5px 12px;
+            }
+            .social-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 20px;
+            }
+            .nav-dots {
+                right: 20px;
+            }
+            .back-to-top, .scroll-hint {
+                right: 20px;
+                bottom: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Menu do Topo -->
+    <nav class="top-menu">
+        <a href="#home" class="menu-item active">HOME</a>
+        <a href="#gallery-preview" class="menu-item">GALLERY</a>
+        <a href="#about" class="menu-item">ABOUT</a>
+    </nav>
+    
+    <!-- Navegação por dots -->
+    <div class="nav-dots">
+        <div class="nav-dot active" data-target="#home"></div>
+        <div class="nav-dot" data-target="#gallery-preview"></div>
+        <div class="nav-dot" data-target="#about"></div>
+    </div>
+    
+    <!-- Scroll Hint (HOME apenas) -->
+    <div class="scroll-hint" id="scrollHint">
+        <i class="fas fa-chevron-down"></i>
+    </div>
+    
+    <!-- Botão Voltar ao Topo -->
+    <a href="#home" class="back-to-top">
+        <i class="fas fa-arrow-up"></i>
+    </a>
+    
+    <!-- Container Principal com Scroll Snap -->
+    <div class="snap-container" id="snapContainer">
+        <!-- Seção 1: HOME -->
+        <section id="home" class="snap-section">
+            <!-- Imagem via CSS background -->
+        </section>
+        
+        <!-- Seção 2: GALLERY PREVIEW -->
+        <section id="gallery-preview" class="snap-section">
+            <div class="gallery-overlay">
+                <div class="gallery-container">
+                    <h2 class="section-title">RECENT WORKS</h2>
+                    
+                    <div class="preview-grid">
+                        <!-- IMAGENS DA GALLERY (coloque na pasta images/gallery/) -->
+                        <div class="preview-item">
+                            <div class="image-protection"></div>
+                            <img src="images/gallery/preview1.jpg" alt="Design 1">
+                        </div>
+                        
+                        <div class="preview-item">
+                            <div class="image-protection"></div>
+                            <img src="images/gallery/preview2.jpg" alt="Design 2">
+                        </div>
+                        
+                        <div class="preview-item">
+                            <div class="image-protection"></div>
+                            <img src="images/gallery/preview3.jpg" alt="Design 3">
+                        </div>
+                    </div>
+                    
+                    <button class="see-gallery-btn" id="seeGalleryBtn">
+                        SEE FULL GALLERY
+                    </button>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Seção 3: ABOUT ME -->
+        <section id="about" class="snap-section">
+            <!-- Imagem via CSS background -->
+            
+            <!-- Rodapé -->
+            <div class="about-footer">
+                <div class="social-icons">
+                    <!-- LINKS DAS REDES SOCIAIS -->
+                    <a href="https://steamcommunity.com/profiles/76561199482462765/" class="social-icon" target="_blank">
+                        <i class="fab fa-steam"></i>
+                        <span class="social-name">Steam</span>
+                    </a>
+                    <a href="https://www.instagram.com/iiybgyii?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" class="social-icon" target="_blank">
+                        <i class="fab fa-instagram"></i>
+                        <span class="social-name">Instagram</span>
+                    </a>
+                    <a href="https://www.xbox.com/pt-BR/play/user/IIYBGYII" class="social-icon" target="_blank">
+                        <i class="fab fa-xbox"></i>
+                        <span class="social-name">Xbox</span>
+                    </a>
+                    <a href="https://pin.it/2BpipbvmL" class="social-icon" target="_blank">
+                        <i class="fab fa-pinterest"></i>
+                        <span class="social-name">Pinterest</span>
+                    </a>
+                    <a href="https://pin.it/4TCjW6YZ3" class="social-icon" target="_blank">
+                        <i class="fab fa-pinterest"></i>
+                        <span class="social-name">Pinterest</span>
+                    </a>
+                    <a href="https://www.youtube.com/@IIYBGYII" class="social-icon" target="_blank">
+                        <i class="fab fa-youtube"></i>
+                        <span class="social-name">YouTube</span>
+                    </a>
+                    <!-- Discord (adicione seu link depois) -->
+                    <a href="https://discord.gg/g9S8sdHWTe" class="social-icon" target="_blank">
+                        <i class="fab fa-discord"></i>
+                        <span class="social-name">Discord</span>
+                    </a>
+                </div>
+                
+                <div class="copyright">
+                    &copy; 2026 Gabriel S. Silva. All rights reserved.
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // ===== INICIALIZAÇÃO =====
+        document.addEventListener('DOMContentLoaded', function() {
+            const container = document.getElementById('snapContainer');
+            const backToTop = document.querySelector('.back-to-top');
+            const scrollHint = document.getElementById('scrollHint');
+            const seeGalleryBtn = document.getElementById('seeGalleryBtn');
+            const navDots = document.querySelectorAll('.nav-dot');
+            const menuItems = document.querySelectorAll('.menu-item');
+            const sections = document.querySelectorAll('.snap-section');
+            
+            let currentSection = 0;
+            let isScrolling = false;
+            
+            // ===== ATUALIZA UI =====
+            function updateUI() {
+                // Atualiza nav dots
+                navDots.forEach((dot, index) => {
+                    if (index === currentSection) {
+                        dot.classList.add('active');
+                    } else {
+                        dot.classList.remove('active');
+                    }
+                });
+                
+                // Atualiza menu
+                menuItems.forEach((item, index) => {
+                    if (index === currentSection) {
+                        item.classList.add('active');
+                    } else {
+                        item.classList.remove('active');
+                    }
+                });
+                
+                // Mostra/oculta botão voltar ao topo
+                if (currentSection === 0) {
+                    backToTop.classList.remove('visible');
+                } else {
+                    backToTop.classList.add('visible');
+                }
+                
+                // Mostra/oculta scroll hint
+                if (currentSection === 0) {
+                    scrollHint.style.display = 'flex';
+                } else {
+                    scrollHint.style.display = 'none';
+                }
+            }
+            
+            // ===== DETECTA SCROLL (INSTANTÂNEO) =====
+            container.addEventListener('scroll', function() {
+                if (isScrolling) return;
+                
+                const scrollTop = container.scrollTop;
+                const windowHeight = window.innerHeight;
+                
+                // Calcula seção atual (snap instantâneo)
+                const newSection = Math.round(scrollTop / windowHeight);
+                
+                if (newSection !== currentSection && newSection >= 0 && newSection < sections.length) {
+                    currentSection = newSection;
+                    updateUI();
+                }
+            });
+            
+            // ===== NAVEGAÇÃO POR DOTS =====
+            navDots.forEach((dot, index) => {
+                dot.addEventListener('click', function() {
+                    if (isScrolling) return;
+                    
+                    isScrolling = true;
+                    
+                    // Scroll instantâneo para a seção
+                    sections[index].scrollIntoView({
+                        behavior: 'instant',
+                        block: 'start'
+                    });
+                    
+                    currentSection = index;
+                    updateUI();
+                    
+                    setTimeout(() => {
+                        isScrolling = false;
+                    }, 100);
+                });
+            });
+            
+            // ===== NAVEGAÇÃO POR MENU =====
+            menuItems.forEach((item, index) => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    if (isScrolling) return;
+                    
+                    isScrolling = true;
+                    
+                    sections[index].scrollIntoView({
+                        behavior: 'instant',
+                        block: 'start'
+                    });
+                    
+                    currentSection = index;
+                    updateUI();
+                    
+                    setTimeout(() => {
+                        isScrolling = false;
+                    }, 100);
+                });
+            });
+            
+            // ===== BOTÃO VOLTAR AO TOPO =====
+            backToTop.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (isScrolling) return;
+                
+                isScrolling = true;
+                
+                sections[0].scrollIntoView({
+                    behavior: 'instant',
+                    block: 'start'
+                });
+                
+                currentSection = 0;
+                updateUI();
+                
+                setTimeout(() => {
+                    isScrolling = false;
+                }, 100);
+            });
+            
+            // ===== BOTÃO SEE GALLERY =====
+            seeGalleryBtn.addEventListener('click', function() {
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 200);
+                
+                // Link para a galeria completa (crie gallery.html depois)
+                // window.location.href = 'gallery.html';
+                alert('Full gallery page will open here.\nCreate gallery.html for the complete portfolio.');
+            });
+            
+            // ===== NAVEGAÇÃO POR TECLADO (INSTANTÂNEO) =====
+            document.addEventListener('keydown', function(e) {
+                if (isScrolling) return;
+                
+                if ((e.key === 'ArrowDown' || e.key === ' ') && currentSection < sections.length - 1) {
+                    e.preventDefault();
+                    isScrolling = true;
+                    
+                    currentSection++;
+                    sections[currentSection].scrollIntoView({
+                        behavior: 'instant',
+                        block: 'start'
+                    });
+                    
+                    updateUI();
+                    
+                    setTimeout(() => {
+                        isScrolling = false;
+                    }, 100);
+                }
+                
+                if (e.key === 'ArrowUp' && currentSection > 0) {
+                    e.preventDefault();
+                    isScrolling = true;
+                    
+                    currentSection--;
+                    sections[currentSection].scrollIntoView({
+                        behavior: 'instant',
+                        block: 'start'
+                    });
+                    
+                    updateUI();
+                    
+                    setTimeout(() => {
+                        isScrolling = false;
+                    }, 100);
+                }
+            });
+            
+            // ===== PROTEÇÃO DE CONTEÚDO =====
+            document.addEventListener('contextmenu', function(e) {
+                if (e.target.tagName === 'IMG' || 
+                    e.target.classList.contains('image-protection') ||
+                    e.target.classList.contains('preview-item')) {
+                    e.preventDefault();
+                    
+                    const warning = document.createElement('div');
+                    warning.textContent = '⚠️ Protected Content';
+                    warning.style.cssText = `
+                        position: fixed;
+                        top: ${e.clientY}px;
+                        left: ${e.clientX}px;
+                        background: rgba(255, 50, 50, 0.95);
+                        color: white;
+                        padding: 10px 20px;
+                        border-radius: 10px;
+                        font-size: 14px;
+                        z-index: 99999;
+                        pointer-events: none;
+                        transform: translate(-50%, -120%);
+                        font-weight: bold;
+                    `;
+                    document.body.appendChild(warning);
+                    
+                    setTimeout(() => warning.remove(), 1000);
+                    return false;
+                }
+            });
+            
+            document.addEventListener('keydown', function(e) {
+                if ((e.ctrlKey && (e.key === 's' || e.key === 'p')) || 
+                    e.key === 'PrintScreen' || 
+                    e.key === 'F12') {
+                    e.preventDefault();
+                    
+                    document.body.style.filter = 'brightness(0.3)';
+                    setTimeout(() => {
+                        document.body.style.filter = '';
+                    }, 500);
+                    return false;
+                }
+            });
+            
+            // ===== INICIALIZA =====
+            updateUI();
+            
+            // Centraliza em telas grandes
+            function centerSite() {
+                const screenWidth = window.innerWidth;
+                const screenHeight = window.innerHeight;
+                
+                if (screenWidth >= 1920 && screenHeight >= 1080) {
+                    container.style.width = '1920px';
+                    container.style.height = '1080px';
+                    container.style.margin = '0 auto';
+                } else {
+                    container.style.width = '100%';
+                    container.style.height = '100vh';
+                    container.style.margin = '0';
+                }
+            }
+            
+            centerSite();
+            window.addEventListener('resize', centerSite);
+            
+            // Força scroll para topo
+            container.scrollTo(0, 0);
+            
+            console.log('✅ SITE FINALIZADO - PRONTO PARA USO');
+            console.log('📍 ESTRUTURA DE ARQUIVOS NECESSÁRIA:');
+            console.log('images/home-bg.jpg (1920x1080)');
+            console.log('images/gallery-bg.jpg (1920x1080)');
+            console.log('images/about-bg.jpg (1920x1080)');
+            console.log('images/gallery/preview1.jpg');
+            console.log('images/gallery/preview2.jpg');
+            console.log('images/gallery/preview3.jpg');
+            console.log('cursor.cur (seu cursor personalizado)');
+        });
+    </script>
+</body>
+</html>
